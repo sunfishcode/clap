@@ -5,6 +5,8 @@ use std::ffi::{OsStr, OsString};
 
 // Define structs which implement various traits.
 #[derive(Debug, Eq, PartialEq)]
+struct HasTryFromOsArg(String);
+#[derive(Debug, Eq, PartialEq)]
 struct HasTryFromOsStr(String);
 #[derive(Debug, Eq, PartialEq)]
 struct HasTraitFromStr(String);
@@ -16,6 +18,17 @@ struct HasFromOsStr(String);
 struct HasFromStr(String);
 #[derive(Debug, Eq, PartialEq)]
 struct HasNone(String);
+
+impl clap::TryFromOsArg for HasTryFromOsArg {
+    type Error = String;
+
+    fn try_from_os_str_arg(s: &OsStr) -> Result<HasTryFromOsArg, Self::Error> {
+        if format!("{:?}", s).contains("!") {
+            return Err(format!("failed HasTryFromOsArg on '{:?}'", s));
+        }
+        Ok(HasTryFromOsArg(format!("HasTryFromOsArg({:?})", s)))
+    }
+}
 
 impl std::convert::TryFrom<&std::ffi::OsStr> for HasTryFromOsStr {
     type Error = String;
@@ -66,6 +79,9 @@ impl From<&str> for HasFromStr {
 #[derive(Clap, PartialEq, Debug)]
 struct Opt {
     #[clap(long, parse(auto))]
+    has_try_from_os_arg: HasTryFromOsArg,
+
+    #[clap(long, parse(auto))]
     has_try_from_os_str: HasTryFromOsStr,
 
     #[clap(long, parse(auto))]
@@ -86,6 +102,7 @@ struct Opt {
 fn auto_basic() {
     assert_eq!(
         Opt {
+            has_try_from_os_arg: HasTryFromOsArg("HasTryFromOsArg(\"infrared\")".to_string()),
             has_try_from_os_str: HasTryFromOsStr("HasTryFromOsStr(\"red\")".to_string()),
             has_trait_from_str: HasTraitFromStr("HasTraitFromStr(\"orange\")".to_string()),
             has_try_from_str: HasTryFromStr("HasTryFromStr(\"yellow\")".to_string()),
@@ -94,6 +111,8 @@ fn auto_basic() {
         },
         Opt::try_parse_from(&[
             "test",
+            "--has-try-from-os-arg",
+            "infrared",
             "--has-try-from-os-str",
             "red",
             "--has-trait-from-str",
@@ -116,6 +135,12 @@ fn auto_invalid_encodings_red() {
     assert_eq!(
         Opt {
             #[cfg(not(windows))]
+            has_try_from_os_arg: HasTryFromOsArg(
+                "HasTryFromOsArg(\"\\xED\\xA0\\x80\")".to_string()
+            ),
+            #[cfg(windows)]
+            has_try_from_os_arg: HasTryFromOsArg("HasTryFromOsArg(\"\\u{d800}\")".to_string()),
+            #[cfg(not(windows))]
             has_try_from_os_str: HasTryFromOsStr(
                 "HasTryFromOsStr(\"\\xED\\xA0\\x80\")".to_string()
             ),
@@ -128,6 +153,8 @@ fn auto_invalid_encodings_red() {
         },
         Opt::try_parse_from(&[
             to_os_string(b"test"),
+            to_os_string(b"--has-try-from-os-arg"),
+            to_os_string(b"\xed\xa0\x80"),
             to_os_string(b"--has-try-from-os-str"),
             to_os_string(b"\xed\xa0\x80"),
             to_os_string(b"--has-trait-from-str"),
@@ -147,6 +174,7 @@ fn auto_invalid_encodings_red() {
 fn auto_invalid_encodings_green() {
     assert_eq!(
         Opt {
+            has_try_from_os_arg: HasTryFromOsArg("HasTryFromOsArg(\"infrared\")".to_string()),
             has_try_from_os_str: HasTryFromOsStr("HasTryFromOsStr(\"red\")".to_string()),
             has_trait_from_str: HasTraitFromStr("HasTraitFromStr(\"orange\")".to_string()),
             has_try_from_str: HasTryFromStr("HasTryFromStr(\"yellow\")".to_string()),
@@ -158,6 +186,8 @@ fn auto_invalid_encodings_green() {
         },
         Opt::try_parse_from(&[
             to_os_string(b"test"),
+            to_os_string(b"--has-try-from-os-arg"),
+            to_os_string(b"infrared"),
             to_os_string(b"--has-try-from-os-str"),
             to_os_string(b"red"),
             to_os_string(b"--has-trait-from-str"),
@@ -186,6 +216,8 @@ fn auto_invalid_encodings_orange() {
         ),
         Opt::try_parse_from(&[
             to_os_string(b"test"),
+            to_os_string(b"--has-try-from-os-arg"),
+            to_os_string(b"infrared"),
             to_os_string(b"--has-try-from-os-str"),
             to_os_string(b"red"),
             to_os_string(b"--has-trait-from-str"),
@@ -213,6 +245,8 @@ fn auto_invalid_encodings_yellow() {
         ),
         Opt::try_parse_from(&[
             to_os_string(b"test"),
+            to_os_string(b"--has-try-from-os-arg"),
+            to_os_string(b"infrared"),
             to_os_string(b"--has-try-from-os-str"),
             to_os_string(b"red"),
             to_os_string(b"--has-trait-from-str"),
@@ -240,6 +274,8 @@ fn auto_invalid_encodings_blue() {
         ),
         Opt::try_parse_from(&[
             to_os_string(b"test"),
+            to_os_string(b"--has-try-from-os-arg"),
+            to_os_string(b"infrared"),
             to_os_string(b"--has-try-from-os-str"),
             to_os_string(b"red"),
             to_os_string(b"--has-trait-from-str"),
@@ -259,6 +295,24 @@ fn auto_invalid_encodings_blue() {
 // Test parse errors with traits that can have errors.
 
 #[test]
+fn auto_parse_errors_infrared() {
+    assert_eq!(
+        "error: Invalid value for \'has-try-from-os-arg\': \
+         The argument \'infrared!\' isn\'t a valid value for \'has-try-from-os-arg\': failed HasTryFromOsArg on \'\"infrared!\"\'\n\n\
+         For more information try --help\n",
+        Opt::try_parse_from(&[
+            "test",
+            "--has-try-from-os-arg", "infrared!",
+            "--has-try-from-os-str", "red",
+            "--has-trait-from-str", "orange",
+            "--has-try-from-str", "yellow",
+            "--has-from-os-str", "green",
+            "--has-from-str", "blue",
+        ]).unwrap_err().to_string()
+    );
+}
+
+#[test]
 fn auto_parse_errors_red() {
     assert_eq!(
         "error: Invalid value for \'has-try-from-os-str\': \
@@ -266,6 +320,7 @@ fn auto_parse_errors_red() {
          For more information try --help\n",
         Opt::try_parse_from(&[
             "test",
+            "--has-try-from-os-arg", "infrared",
             "--has-try-from-os-str", "red!",
             "--has-trait-from-str", "orange",
             "--has-try-from-str", "yellow",
@@ -283,6 +338,7 @@ fn auto_parse_errors_orange() {
          For more information try --help\n",
         Opt::try_parse_from(&[
             "test",
+            "--has-try-from-os-arg", "infrared",
             "--has-try-from-os-str", "red",
             "--has-trait-from-str", "orange!",
             "--has-try-from-str", "yellow",
@@ -300,6 +356,7 @@ fn auto_parse_errors_yellow() {
          For more information try --help\n",
         Opt::try_parse_from(&[
             "test",
+            "--has-try-from-os-arg", "infrared",
             "--has-try-from-os-str", "red",
             "--has-trait-from-str", "orange",
             "--has-try-from-str", "yellow!",
@@ -323,7 +380,9 @@ fn auto_none() {
     assert_eq!(
         "error: Invalid value for \'has-none\': \
          The argument \'colorless\' isn\'t a valid value for \'has-none\': \
-         Type `HasNone` does not implement any of the parsing traits: `clap::ArgEnum`, `TryFrom<&OsStr>`, `FromStr`, `TryFrom<&str>`, `From<&OsStr>`, or `From<&str>`\n\n\
+         Type `HasNone` does not implement any of the parsing traits: \
+         `clap::ArgEnum`, `clap::TryFromOsArg`, `TryFrom<&OsStr>`, `FromStr`, \
+         `TryFrom<&str>`, `From<&OsStr>`, or `From<&str>`\n\n\
          For more information try --help\n".to_string(),
         NoneOpt::try_parse_from(&[
             "test",
@@ -335,6 +394,9 @@ fn auto_none() {
 // Test that Vec-of-T parsing works with `auto`.
 #[derive(Clap, PartialEq, Debug)]
 struct VecOpt {
+    #[clap(long, parse(auto))]
+    has_try_from_os_arg: Vec<HasTryFromOsArg>,
+
     #[clap(long, parse(auto))]
     has_try_from_os_str: Vec<HasTryFromOsStr>,
 
@@ -355,6 +417,7 @@ struct VecOpt {
 fn auto_vec() {
     assert_eq!(
         VecOpt {
+            has_try_from_os_arg: vec![HasTryFromOsArg("HasTryFromOsArg(\"infrared\")".to_string())],
             has_try_from_os_str: vec![HasTryFromOsStr("HasTryFromOsStr(\"red\")".to_string())],
             has_trait_from_str: vec![HasTraitFromStr("HasTraitFromStr(\"orange\")".to_string())],
             has_try_from_str: vec![HasTryFromStr("HasTryFromStr(\"yellow\")".to_string())],
@@ -363,6 +426,8 @@ fn auto_vec() {
         },
         VecOpt::try_parse_from(&[
             "test",
+            "--has-try-from-os-arg",
+            "infrared",
             "--has-try-from-os-str",
             "red",
             "--has-trait-from-str",

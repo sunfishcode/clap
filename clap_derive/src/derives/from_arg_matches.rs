@@ -266,17 +266,27 @@ fn gen_auto_parser(
         use std::marker::PhantomData;
 
         struct Wrap<T>(T);
-        trait Specialize7 {
+        trait Specialize8 {
             type Return;
             fn specialized(&self) -> Self::Return;
         }
-        impl<'a, T: clap::ArgEnum> Specialize7 for &&&&&&&Wrap<(&'a OsStr, PhantomData<T>)> {
+        impl<'a, T: clap::ArgEnum> Specialize8 for &&&&&&&&Wrap<(&'a OsStr, PhantomData<T>)> {
             type Return = Result<T, Result<String, OsString>>;
             fn specialized(&self) -> Self::Return {
                 match self.0.0.to_str() {
                     None => Err(Err(self.0.0.to_os_string())),
                     Some(s) => T::from_str(s, #ci).map_err(Ok),
                 }
+            }
+        }
+        trait Specialize7 {
+            type Return;
+            fn specialized(&self) -> Self::Return;
+        }
+        impl<'a, T: clap::TryFromOsArg> Specialize7 for &&&&&&&Wrap<(&'a OsStr, PhantomData<T>)> {
+            type Return = Result<T, Result<T::Error, OsString>>;
+            fn specialized(&self) -> Self::Return {
+                T::try_from_os_str_arg(self.0.0).map_err(Ok)
             }
         }
         trait Specialize6 {
@@ -347,13 +357,13 @@ fn gen_auto_parser(
             fn specialized(&self) -> Self::Return {
                 Err(Ok(format!(
                     "Type `{}` does not implement any of the parsing traits: \
-                    `clap::ArgEnum`, `TryFrom<&OsStr>`, `FromStr`, `TryFrom<&str>`, \
-                    `From<&OsStr>`, or `From<&str>`",
+                    `clap::ArgEnum`, `clap::TryFromOsArg`, `TryFrom<&OsStr>`, `FromStr`, \
+                    `TryFrom<&str>`, `From<&OsStr>`, or `From<&str>`",
                     stringify!(#result_type)
                 )))
             }
         }
-        (&&&&&&&Wrap((s, PhantomData::<#result_type>))).specialized()
+        (&&&&&&&&Wrap((s, PhantomData::<#result_type>))).specialized()
     })
 }
 
