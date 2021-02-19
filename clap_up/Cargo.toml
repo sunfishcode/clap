@@ -1,5 +1,5 @@
 [package]
-name = "clap_up"
+name = "nameless-clap_up"
 version = "0.0.0"
 edition = "2018"
 authors = [
@@ -7,7 +7,7 @@ authors = [
 	"Clap Maintainers",
 ]
 description = "Automatic code upgrader for Clap"
-repository = "https://github.com/clap-rs/clap/tree/master/clap_up"
+repository = "https://github.com/sunfishcode/clap/tree/master/clap_up"
 homepage = "https://clap.rs/"
 keywords = [
 	"clap",
@@ -20,8 +20,8 @@ license = "MIT OR Apache-2.0"
 readme = "README.md"
 
 [badges]
-is-it-maintained-issue-resolution = { repository = "clap-rs/clap" }
-is-it-maintained-open-issues = { repository = "clap-rs/clap" }
+is-it-maintained-issue-resolution = { repository = "sunfishcode/clap" }
+is-it-maintained-open-issues = { repository = "sunfishcode/clap" }
 maintenance = {status = "actively-developed"}
 
 [lib]

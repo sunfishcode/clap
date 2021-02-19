@@ -1,3 +1,4 @@
+extern crate nameless_clap as clap;
 use clap::{app_from_crate, ErrorKind};
 
 static EVERYTHING: &str = "clap {{version}}

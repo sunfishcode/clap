@@ -13,13 +13,13 @@ Add `clap` to your dependencies of your `Cargo.toml`:
 
 ```toml
 [dependencies]
-clap = "3"
+nameless-clap = "3"
 ```
 
 And then, in your rust file:
 ```rust
 use std::path::PathBuf;
-use clap::Clap;
+use nameless_clap::Clap;
 
 /// A basic example
 #[derive(Clap, Debug)]

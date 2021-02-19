@@ -1,3 +1,4 @@
+extern crate nameless_clap as clap;
 #[cfg(debug_assertions)]
 #[test]
 #[should_panic = "Argument names must be unique, but 'arg1' is in use by more than one argument or group"]

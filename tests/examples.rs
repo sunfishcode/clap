@@ -1,4 +1,5 @@
 #![cfg(not(tarpaulin))]
+extern crate nameless_clap as clap;
 
 use std::ffi::OsStr;
 use std::fs;

@@ -1,3 +1,4 @@
+extern crate nameless_clap as clap;
 mod utils;
 
 use clap::{clap_app, App, AppSettings, Arg, ArgGroup, ArgSettings, ErrorKind};

@@ -1,6 +1,37 @@
 <!-- omit in TOC -->
 # clap
 
+This is nameless-clap, a temporary fork of [`clap`] for the [`nameless`]
+project.
+
+These are the patches we currently have:
+
+ - Upstream `clap_derive` parses command-line arguments twice. The first patch
+   makes it parse arguments just once:
+
+   The PR is here: https://github.com/clap-rs/clap/pull/2206
+
+ - The second patch adds an `auto` mode which uses some Rust type magic to
+   automatically select between `FromStr`, `TryFrom<&OsStr>`, and other parsing
+   traits based on which traits a type implements. This means that users don't
+   need to manually configure things in many cases; more things Just Work:
+
+   The PR is here: https://github.com/clap-rs/clap/pull/2298
+
+ - The third patch adds a new parsing trait, `TryFromOsArg`, which is for
+   parsing functions which may have side effects such as acquiring resources,
+   as `nameless`'s types do. This avoids the having side effects in `FromStr`
+   and similar traits. Thanks to `auto` (the first patch above), this new trait
+   is automatically used when applicable, and thanks to parsing the arguments
+   only once (the second patch above), the side effects are only produced once.
+
+   This patch is not yet submitted upstream, as it depends on the previous two.
+
+[`clap`]: https://github.com/clap-rs/clap
+[`nameless`]: https://github.com/sunfishcode/nameless
+
+The upstream README.md content follows...
+
 [![Crates.io](https://img.shields.io/crates/v/clap?style=flat-square)](https://crates.io/crates/clap)
 [![Crates.io](https://img.shields.io/crates/d/clap?style=flat-square)](https://crates.io/crates/clap)
 [![License](https://img.shields.io/badge/license-Apache%202.0-blue?style=flat-square)](https://github.com/clap-rs/clap/blob/master/LICENSE-APACHE)

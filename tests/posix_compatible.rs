@@ -1,3 +1,4 @@
+extern crate nameless_clap as clap;
 use clap::{App, Arg, ErrorKind};
 
 #[test]

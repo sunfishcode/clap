@@ -1,3 +1,4 @@
+extern crate nameless_clap as clap;
 mod utils;
 
 use clap::{App, Arg};

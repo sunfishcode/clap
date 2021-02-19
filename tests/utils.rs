@@ -1,4 +1,5 @@
 #![allow(unused_imports, dead_code)]
+extern crate nameless_clap as clap;
 
 use std::io::{Cursor, Write};
 use std::str;

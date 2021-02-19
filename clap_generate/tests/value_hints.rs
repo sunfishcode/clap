@@ -1,3 +1,4 @@
+extern crate nameless_clap_generate as clap_generate;
 use clap::{App, AppSettings, Arg, ValueHint};
 use clap_generate::generators::*;
 use completions::common;

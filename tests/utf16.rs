@@ -3,6 +3,7 @@
 //! because that's a Unix-only feature.
 
 #![cfg(windows)]
+extern crate nameless_clap as clap;
 
 use clap::{App, Arg};
 use std::ffi::OsString;

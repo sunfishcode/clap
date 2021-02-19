@@ -1,5 +1,5 @@
 [package]
-name = "clap_generate"
+name = "nameless-clap_generate"
 version = "3.0.0-beta.2"
 edition = "2018"
 authors = [
@@ -12,8 +12,8 @@ include = [
 	"README.md"
 ]
 description = "A generator library used with clap for shell completion scripts, manpage, etc."
-repository = "https://github.com/clap-rs/clap/tree/master/clap_generate"
-documentation = "https://docs.rs/clap_generate"
+repository = "https://github.com/sunfishcode/clap/tree/master/clap_generate"
+documentation = "https://docs.rs/nameless-clap_generate"
 homepage = "https://clap.rs/"
 keywords = [
 	"clap",
@@ -30,12 +30,12 @@ readme = "README.md"
 bench = false
 
 [badges]
-is-it-maintained-issue-resolution = { repository = "clap-rs/clap" }
-is-it-maintained-open-issues = { repository = "clap-rs/clap" }
+is-it-maintained-issue-resolution = { repository = "sunfishcode/clap" }
+is-it-maintained-open-issues = { repository = "sunfishcode/clap" }
 maintenance = {status = "actively-developed"}
 
 [dependencies]
-clap = { path = "../", version = "3.0.0-beta.2" }
+clap = { path = "../", package = "nameless-clap", version = "3.0.0-beta.2" }
 
 [dev-dependencies]
 pretty_assertions = "0.6"

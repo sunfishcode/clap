@@ -1,10 +1,11 @@
 [package]
-name = "clap_derive"
+name = "nameless-clap_derive"
 version = "3.0.0-beta.2"
 edition = "2018"
 authors = [
 	"Guillaume Pinot <texitoi@texitoi.eu>",
-	"Clap Maintainers"
+	"Clap Maintainers",
+	"Dan Gohman <dev@sunfishcode.online>",
 ]
 include = [
 	"src/**/*",
@@ -12,8 +13,8 @@ include = [
 	"README.md"
 ]
 description = "Parse command line argument by defining a struct, derive crate."
-repository = "https://github.com/clap-rs/clap/tree/master/clap_derive"
-documentation = "https://docs.rs/clap_derive"
+repository = "https://github.com/sunfishcode/clap/tree/master/clap_derive"
+documentation = "https://docs.rs/nameless-clap_derive"
 homepage = "https://clap.rs/"
 keywords = [
 	"clap",
@@ -27,8 +28,8 @@ license = "MIT OR Apache-2.0"
 readme = "README.md"
 
 [badges]
-is-it-maintained-issue-resolution = { repository = "clap-rs/clap" }
-is-it-maintained-open-issues = { repository = "clap-rs/clap" }
+is-it-maintained-issue-resolution = { repository = "sunfishcode/clap" }
+is-it-maintained-open-issues = { repository = "sunfishcode/clap" }
 maintenance = {status = "actively-developed"}
 
 [lib]
@@ -43,8 +44,8 @@ heck = "0.3.0"
 proc-macro-error = "1"
 
 [dev-dependencies]
-clap = { path = "../" }
-clap_generate = { path = "../clap_generate" }
+clap = { path = "../", package = "nameless-clap" }
+clap_generate = { path = "../clap_generate", package = "nameless-clap_generate" }
 os_str_bytes = { version = "2.4" }
 trybuild = "1.0"
 rustversion = "1"

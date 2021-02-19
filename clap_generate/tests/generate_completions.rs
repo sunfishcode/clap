@@ -1,3 +1,4 @@
+extern crate nameless_clap_generate as clap_generate;
 use clap::{App, Arg};
 use clap_generate::{generate, generators::*};
 use std::io;

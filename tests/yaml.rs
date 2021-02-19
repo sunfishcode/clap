@@ -1,4 +1,5 @@
 #![cfg(feature = "yaml")]
+extern crate nameless_clap as clap;
 
 use clap::{load_yaml, App, ValueHint};
 

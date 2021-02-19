@@ -1,3 +1,4 @@
+extern crate nameless_clap as clap;
 use std::env;
 use std::ffi::OsStr;
 
